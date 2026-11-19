@@ -1,14 +1,15 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
+    [SerializeField] private AudioMixer mixer;
     [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioClip music;
     [SerializeField] private AudioClip click;
-    [SerializeField, Range(0f, 1f)] private float musicVolume = 0.5f;
 
     private void Awake()
     {
@@ -17,26 +18,20 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        AudioListener.volume = SettingsData.Volume;
+        // Mixer ki values Start mein set karni hoti hain (Awake mein kabhi kabhi apply nahi hoti).
+        VolumeSettings.Init(mixer);
 
         if (music != null)
         {
             musicSource.clip = music;
             musicSource.loop = true;
-            musicSource.volume = musicVolume;
             musicSource.Play();
         }
     }
 
-    private void Update()
-    {
-        musicSource.mute = !SettingsData.Music;
-        sfxSource.mute = !SettingsData.Sound;
-    }
-
     public void PlayClick()
     {
-        if (click == null || !SettingsData.Sound) return;
-        sfxSource.PlayOneShot(click);
+        if (click != null)
+            sfxSource.PlayOneShot(click);
     }
 }

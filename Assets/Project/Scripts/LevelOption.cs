@@ -33,11 +33,13 @@ public class LevelOption : MonoBehaviour
     {
         if (!unlocked)
         {
+            UIAudio.Play(UISound.Error);
             ((RectTransform)transform).DOShakeAnchorPos(0.35f, new Vector2(24f, 0f), 20, 90f, false, true).SetUpdate(true);
             return;
         }
 
         GameState.SelectedLevel = level;
+        UIAudio.Play(UISound.PanelOpen);
 
         if (ScreenManager.Instance != null)
             ScreenManager.Instance.GoTo("Loadout");

@@ -39,6 +39,8 @@ public class ShopItem : MonoBehaviour
 
         if (!GameState.TrySpend(price))
         {
+            UIAudio.Play(UISound.Error);
+
             RectTransform rt = (RectTransform)buyButton.transform;
             rt.DOKill(true);
             rt.DOShakeAnchorPos(0.35f, new Vector2(20f, 0f), 20, 90f, false, true).SetUpdate(true);
@@ -47,6 +49,8 @@ public class ShopItem : MonoBehaviour
             buyImage.DOColor(normalColor, 0.4f).SetUpdate(true);
             return;
         }
+
+        UIAudio.Play(UISound.Success);
 
         if (oneTimePurchase) GameState.Own(itemId);
 

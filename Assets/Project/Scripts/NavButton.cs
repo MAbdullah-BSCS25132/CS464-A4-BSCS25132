@@ -16,12 +16,17 @@ public class NavButton : MonoBehaviour
 
     private void OnClick()
     {
-        if (ScreenManager.Instance == null) return;
-        if (action == NavAction.None) return;
+        if (ScreenManager.Instance == null || action == NavAction.None) return;
 
         if (action == NavAction.Back)
+        {
+            UIAudio.Play(UISound.PanelClose);
             ScreenManager.Instance.Back();
+        }
         else
+        {
+            UIAudio.Play(UISound.PanelOpen);
             ScreenManager.Instance.GoTo(target.ToString());
+        }
     }
 }

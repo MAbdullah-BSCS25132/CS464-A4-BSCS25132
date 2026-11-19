@@ -5,6 +5,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Slider))]
 public class VolumeSlider : MonoBehaviour
 {
+    [SerializeField] private VolumeChannel channel = VolumeChannel.Master;
     [SerializeField] private TMP_Text valueText;
 
     private Slider slider;
@@ -19,14 +20,19 @@ public class VolumeSlider : MonoBehaviour
 
     private void OnEnable()
     {
-        slider.SetValueWithoutNotify(SettingsData.Volume);
-        Draw(SettingsData.Volume);
+        float v = VolumeSettings.Get(channel);
+        slider.SetValueWithoutNotify(v);
+        Draw(v);
+    }
+
+    private void OnDisable()
+    {
+        PlayerPrefs.Save();
     }
 
     private void OnChanged(float value)
     {
-        SettingsData.Volume = value;
-        AudioListener.volume = value;
+        VolumeSettings.Set(channel, value);
         Draw(value);
     }
 

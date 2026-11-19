@@ -1,19 +1,30 @@
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 
-public class ButtonFeedback : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
+public class ButtonFeedback : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
 {
     [SerializeField] private float pressedScale = 0.94f;
+    [SerializeField] private UISound pressSound = UISound.Click;
+    [SerializeField] private bool playHover = true;
 
     private Tween tween;
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!playHover) return;
+
+        // Hover sirf mouse par bajta hai. Phone par touch se double awaaz aati.
+        ExtendedPointerEventData ext = eventData as ExtendedPointerEventData;
+        if (ext != null && ext.pointerType == UIPointerType.MouseOrPen)
+            UIAudio.Play(UISound.Hover);
+    }
 
     public void OnPointerDown(PointerEventData eventData)
     {
         ScaleTo(pressedScale, 0.08f, Ease.OutQuad);
-
-        if (AudioManager.Instance != null)
-            AudioManager.Instance.PlayClick();
+        UIAudio.Play(pressSound);
     }
 
     public void OnPointerUp(PointerEventData eventData)

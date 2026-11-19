@@ -367,6 +367,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
   pressedScale: 0.94
+  pressSound: 0
+  playHover: 1
 --- !u!114 &273828090785489091
 MonoBehaviour:
   m_ObjectHideFlags: 0
