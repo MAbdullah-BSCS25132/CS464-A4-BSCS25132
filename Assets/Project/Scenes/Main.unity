@@ -11264,6 +11264,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameplayFlow
   background: {fileID: 13097085}
   gameplayScene: Gameplay
+  mixer: {fileID: 24100000, guid: 6332d903b7542cb418689c76c7e94ea3, type: 2}
+  normalCutoff: 22000
+  pausedCutoff: 700
+  cutoffTime: 0.3
 --- !u!1001 &1719922200
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -29,6 +29,7 @@ public class AudioManager : MonoBehaviour
         {
             s.playOnAwake = false;
             s.loop = true;
+            s.ignoreListenerPause = true;
             s.volume = 0f;
         }
     }
