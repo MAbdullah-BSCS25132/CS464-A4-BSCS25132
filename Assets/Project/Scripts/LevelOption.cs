@@ -39,7 +39,7 @@ public class LevelOption : MonoBehaviour
         }
 
         GameState.SelectedLevel = level;
-        UIAudio.Play(UISound.PanelOpen);
+        UIAudio.Play(UISound.Click);
 
         if (ScreenManager.Instance != null)
             ScreenManager.Instance.GoTo("Loadout");

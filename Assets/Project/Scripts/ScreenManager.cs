@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
+// Naye screens hamesha list ke END mein add karo, warna Inspector mein purane ids badal jate hain.
 public enum ScreenId
 {
     Title,
@@ -15,12 +16,17 @@ public enum ScreenId
     Results,
     Shop,
     Settings,
-    Credits
+    Credits,
+    Loading
 }
 
+[DefaultExecutionOrder(-200)]
 public class ScreenManager : MonoBehaviour
 {
     public static ScreenManager Instance { get; private set; }
+
+    // Jab bhi koi naya screen dikhna shuru ho
+    public event Action<ScreenId> ScreenShown;
 
     [Serializable]
     public class ScreenEntry
@@ -42,6 +48,9 @@ public class ScreenManager : MonoBehaviour
     private ScreenId current;
     private bool hasCurrent;
     private bool busy;
+
+    public bool IsBusy { get { return busy; } }
+    public ScreenId Current { get { return current; } }
 
     private void Awake()
     {
@@ -102,6 +111,9 @@ public class ScreenManager : MonoBehaviour
         CanvasGroup next = lookup[target].group;
         RectTransform nextRt = (RectTransform)next.transform;
 
+        CanvasGroup outgoing = null;
+        if (hasCurrent && current != target) outgoing = lookup[current].group;
+
         next.gameObject.SetActive(true);
         next.alpha = 0f;
         next.interactable = false;
@@ -110,17 +122,14 @@ public class ScreenManager : MonoBehaviour
 
         Sequence seq = DOTween.Sequence().SetUpdate(true);
 
-        if (hasCurrent)
+        if (outgoing != null)
         {
-            CanvasGroup outgoing = lookup[current].group;
             RectTransform outRt = (RectTransform)outgoing.transform;
             outgoing.interactable = false;
             outgoing.blocksRaycasts = false;
 
             seq.Join(outgoing.DOFade(0f, duration * 0.8f).SetEase(Ease.InCubic));
             seq.Join(outRt.DOAnchorPosX(-slideDistance * dir, duration).SetEase(Ease.InCubic));
-
-            seq.OnComplete(() => outgoing.gameObject.SetActive(false));
         }
 
         seq.Join(next.DOFade(1f, duration).SetEase(Ease.OutCubic));
@@ -128,11 +137,7 @@ public class ScreenManager : MonoBehaviour
 
         seq.OnComplete(() =>
         {
-            if (hasCurrent && current != target)
-            {
-                CanvasGroup old = lookup[current].group;
-                if (old != next) old.gameObject.SetActive(false);
-            }
+            if (outgoing != null) outgoing.gameObject.SetActive(false);
 
             next.interactable = true;
             next.blocksRaycasts = true;
@@ -140,5 +145,7 @@ public class ScreenManager : MonoBehaviour
             hasCurrent = true;
             busy = false;
         });
+
+        ScreenShown?.Invoke(target);
     }
 }

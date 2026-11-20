@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        if (autoStart) StartGame();
+        if (autoStart && UnityEngine.SceneManagement.SceneManager.sceneCount == 1) StartGame();
     }
 
     public void StartGame()
