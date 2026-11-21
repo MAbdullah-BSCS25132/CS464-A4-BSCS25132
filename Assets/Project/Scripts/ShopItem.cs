@@ -8,6 +8,8 @@ public class ShopItem : MonoBehaviour
     [SerializeField] private string itemId = "NOVA";
     [SerializeField] private int price = 300;
     [SerializeField] private bool oneTimePurchase = true;
+    [SerializeField] private string description = "";
+    [SerializeField] private TMP_Text infoText;
     [SerializeField] private Button buyButton;
     [SerializeField] private Image buyImage;
     [SerializeField] private TMP_Text buyLabel;
@@ -31,6 +33,13 @@ public class ShopItem : MonoBehaviour
         bool owned = oneTimePurchase && GameState.IsOwned(itemId);
         buyImage.color = owned ? ownedColor : normalColor;
         buyLabel.text = owned ? "OWNED" : price.ToString();
+
+        if (infoText != null)
+        {
+            int count = GameState.GetCount(itemId);
+            bool showCount = !oneTimePurchase && count > 0;
+            infoText.text = description + (showCount ? " (have " + count + ")" : "");
+        }
     }
 
     private void OnBuy()
@@ -52,7 +61,9 @@ public class ShopItem : MonoBehaviour
 
         UIAudio.Play(UISound.Success);
 
+        // Ship ek baar khareedi jati hai, power-up ka count badhta hai
         if (oneTimePurchase) GameState.Own(itemId);
+        else GameState.AddItem(itemId);
 
         if (coinLabel != null) coinLabel.Animate();
 

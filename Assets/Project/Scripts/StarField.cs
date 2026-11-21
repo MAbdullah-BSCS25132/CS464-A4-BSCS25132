@@ -4,18 +4,20 @@ using UnityEngine.UI;
 public class StarField : MonoBehaviour
 {
     [SerializeField] private Sprite starSprite;
-    [SerializeField] private int count = 40;
+    [SerializeField] private int count = 25;
     [SerializeField] private Vector2 sizeRange = new Vector2(4f, 10f);
     [SerializeField] private Vector2 speedRange = new Vector2(15f, 60f);
     [SerializeField] private Color starColor = new Color32(0xF4, 0xF6, 0xFF, 255);
 
     private RectTransform area;
+    private CanvasGroup group;
     private RectTransform[] stars;
     private float[] speeds;
 
     private void Start()
     {
         area = (RectTransform)transform;
+        group = GetComponent<CanvasGroup>();
         Canvas.ForceUpdateCanvases();
 
         stars = new RectTransform[count];
@@ -54,6 +56,9 @@ public class StarField : MonoBehaviour
     private void Update()
     {
         if (stars == null) return;
+
+        // Gameplay mein background chhupa hota hai, tab taare hilane ki zaroorat nahi
+        if (group != null && group.alpha < 0.01f) return;
 
         float w = area.rect.width;
         float h = area.rect.height;

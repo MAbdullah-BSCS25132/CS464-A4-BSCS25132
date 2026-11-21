@@ -7,21 +7,31 @@ using UnityEngine.UI;
 public class LevelOption : MonoBehaviour
 {
     [SerializeField] private int level = 1;
-    [SerializeField] private bool unlocked = true;
     [SerializeField] private TMP_Text numberText;
     [SerializeField] private TMP_Text labelText;
     [SerializeField] private Image background;
     [SerializeField] private Color unlockedColor = new Color32(0x1A, 0x21, 0x45, 255);
     [SerializeField] private Color lockedColor = new Color32(0x12, 0x17, 0x33, 255);
 
+    private bool IsUnlocked
+    {
+        get { return level <= GameState.UnlockedLevel; }
+    }
+
     private void Awake()
     {
         GetComponent<Button>().onClick.AddListener(OnClick);
+    }
+
+    // Level Select har baar khulne par dobara check hota hai
+    private void OnEnable()
+    {
         Refresh();
     }
 
     private void Refresh()
     {
+        bool unlocked = IsUnlocked;
         numberText.text = level.ToString();
         labelText.text = unlocked ? "LEVEL " + level : "LOCKED";
         background.color = unlocked ? unlockedColor : lockedColor;
@@ -31,7 +41,7 @@ public class LevelOption : MonoBehaviour
 
     private void OnClick()
     {
-        if (!unlocked)
+        if (!IsUnlocked)
         {
             UIAudio.Play(UISound.Error);
             ((RectTransform)transform).DOShakeAnchorPos(0.35f, new Vector2(24f, 0f), 20, 90f, false, true).SetUpdate(true);

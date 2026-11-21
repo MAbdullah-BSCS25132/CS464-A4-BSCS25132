@@ -18,7 +18,7 @@ public class ResultsView : MonoBehaviour
         seq?.Kill();
 
         scoreText.text = "0";
-        coinsText.text = "+" + RunResult.Coins + " COINS";
+        coinsText.text = "+" + RunResult.Coins + " COINS" + (RunResult.BoostUsed ? "  (BOOST x2)" : "");
         coinsText.alpha = 0f;
 
         int score = 0;

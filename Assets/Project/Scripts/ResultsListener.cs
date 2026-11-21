@@ -38,9 +38,33 @@ public class ResultsListener : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(delay);
 
-        RunResult.Score = gm.CoinsCollected * 100 + gm.Health * 50;
-        RunResult.Stars = won ? Mathf.Clamp(gm.Health, 1, 3) : 0;
-        RunResult.Coins = gm.CoinsCollected * (won ? 10 : 5);
+        int coins = gm.CoinsCollected;
+        int seconds = Mathf.FloorToInt(gm.Elapsed);
+
+        RunResult.Won = won;
+        RunResult.Seconds = seconds;
+
+        if (GameState.IsEndless)
+        {
+            RunResult.Score = coins * 100 + seconds * 10;
+            RunResult.Stars = seconds >= 60 ? 3 : (seconds >= 30 ? 2 : (seconds >= 10 ? 1 : 0));
+            RunResult.Coins = coins * 8;
+        }
+        else if (GameState.IsTimeAttack)
+        {
+            RunResult.Score = coins * 100;
+            RunResult.Stars = coins >= 15 ? 3 : (coins >= 10 ? 2 : (coins >= 5 ? 1 : 0));
+            RunResult.Coins = coins * 8;
+        }
+        else
+        {
+            RunResult.Score = coins * 100 + gm.Health * 50;
+            RunResult.Stars = won ? Mathf.Clamp(gm.Health, 1, 3) : 0;
+            RunResult.Coins = coins * (won ? 10 : 5);
+        }
+
+        RunResult.BoostUsed = gm.BoostActive;
+        if (RunResult.BoostUsed) RunResult.Coins *= 2;
         GameState.Coins += RunResult.Coins;
 
         if (ScreenManager.Instance != null)

@@ -7,6 +7,7 @@ public class GameAudioListener : MonoBehaviour
     [SerializeField] private AudioClip damage;
     [SerializeField] private AudioClip win;
     [SerializeField] private AudioClip lose;
+    [SerializeField] private AudioClip shield;
     [SerializeField] private float pitchVariation = 0.08f;
 
     private GameManager gm;
@@ -18,6 +19,7 @@ public class GameAudioListener : MonoBehaviour
 
         gm.Collected += OnCollected;
         gm.Damaged += OnDamaged;
+        gm.ShieldBlocked += OnShieldBlocked;
         gm.GameWon += OnGameWon;
         gm.GameLost += OnGameLost;
     }
@@ -28,6 +30,7 @@ public class GameAudioListener : MonoBehaviour
 
         gm.Collected -= OnCollected;
         gm.Damaged -= OnDamaged;
+        gm.ShieldBlocked -= OnShieldBlocked;
         gm.GameWon -= OnGameWon;
         gm.GameLost -= OnGameLost;
     }
@@ -42,6 +45,13 @@ public class GameAudioListener : MonoBehaviour
     private void OnDamaged(int healthLeft)
     {
         Play(damage, 1f, true);
+    }
+
+    private void OnShieldBlocked()
+    {
+        // Shield ki alag awaaz na ho to damage ki awaaz oonchi pitch par
+        if (shield != null) Play(shield, 1f, true);
+        else Play(damage, 1.5f, true);
     }
 
     private void OnGameWon()

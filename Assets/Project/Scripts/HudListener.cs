@@ -6,6 +6,9 @@ using UnityEngine.UI;
 public class HudListener : MonoBehaviour
 {
     [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private TMP_Text timeText;
+    [SerializeField] private TMP_Text modeText;
+    [SerializeField] private TMP_Text shieldText;
     [SerializeField] private TMP_Text bannerText;
     [SerializeField] private Image[] lives;
     [SerializeField] private Color lifeOn = new Color32(0x22, 0xD3, 0xEE, 255);
@@ -21,6 +24,8 @@ public class HudListener : MonoBehaviour
         gm.GameStarted += OnGameStarted;
         gm.Collected += OnCollected;
         gm.Damaged += OnDamaged;
+        gm.ShieldBlocked += OnShieldBlocked;
+        gm.Ticked += OnTicked;
         gm.GameWon += OnGameWon;
         gm.GameLost += OnGameLost;
     }
@@ -32,6 +37,8 @@ public class HudListener : MonoBehaviour
         gm.GameStarted -= OnGameStarted;
         gm.Collected -= OnCollected;
         gm.Damaged -= OnDamaged;
+        gm.ShieldBlocked -= OnShieldBlocked;
+        gm.Ticked -= OnTicked;
         gm.GameWon -= OnGameWon;
         gm.GameLost -= OnGameLost;
     }
@@ -39,7 +46,20 @@ public class HudListener : MonoBehaviour
     private void OnGameStarted()
     {
         bannerText.text = "";
+
+        if (modeText != null)
+        {
+            if (GameState.IsClassic) modeText.text = "CLASSIC - LEVEL " + gm.Level;
+            else modeText.text = GameState.IsEndless ? "ENDLESS" : "TIME ATTACK";
+        }
+
+        if (shieldText != null) shieldText.gameObject.SetActive(gm.ShieldActive);
+
         DrawScore(0, gm.TargetCoins);
+
+        for (int i = 0; i < lives.Length; i++)
+            lives[i].gameObject.SetActive(i < gm.MaxHealth);
+
         DrawLives(gm.Health);
     }
 
@@ -61,9 +81,24 @@ public class HudListener : MonoBehaviour
         }
     }
 
+    private void OnShieldBlocked()
+    {
+        if (shieldText == null) return;
+
+        shieldText.transform.DOKill(true);
+        shieldText.transform.DOPunchScale(Vector3.one * 0.3f, 0.3f, 6, 0.5f)
+            .OnComplete(() => shieldText.gameObject.SetActive(false));
+    }
+
+    private void OnTicked(int seconds)
+    {
+        if (timeText == null) return;
+        timeText.text = "TIME " + (seconds / 60) + ":" + (seconds % 60).ToString("00");
+    }
+
     private void OnGameWon()
     {
-        ShowBanner("LEVEL CLEAR");
+        ShowBanner(GameState.IsTimeAttack ? "TIME UP" : "LEVEL CLEAR");
     }
 
     private void OnGameLost()
@@ -81,7 +116,7 @@ public class HudListener : MonoBehaviour
 
     private void DrawScore(int coins, int target)
     {
-        scoreText.text = "COINS " + coins + " / " + target;
+        scoreText.text = target > 0 ? "COINS " + coins + " / " + target : "COINS " + coins;
     }
 
     private void DrawLives(int health)

@@ -8,6 +8,10 @@ public class Spawner : MonoBehaviour
     [SerializeField] private FallingItem asteroidPrefab;
     [SerializeField] private float playerRadius = 55f;
 
+    [Header("Difficulty")]
+    [SerializeField] private float baseSpeed = 610f;      // level 1 ki raftaar
+    [SerializeField] private float speedPerStep = 220f;   // har agle level par kitni badhe
+
     private GameManager gm;
     private float timer;
 
@@ -41,11 +45,14 @@ public class Spawner : MonoBehaviour
         timer -= Time.deltaTime;
         if (timer > 0f) return;
 
-        int level = gm.Level;
-        timer = Mathf.Max(0.35f, 0.9f - level * 0.1f);
-        float speed = 500f + level * 120f;
+        // Difficulty 1 = basic. Level jitna upar, ya Endless mein waqt jitna guzre, utni zyada.
+        float steps = gm.Difficulty - 1f;
 
-        FallingItem prefab = Random.value < 0.6f ? coinPrefab : asteroidPrefab;
+        timer = Mathf.Max(0.22f, 0.82f - steps * 0.1f);
+        float speed = baseSpeed + steps * speedPerStep;
+        float coinChance = Mathf.Max(0.45f, 0.62f - steps * 0.03f);
+
+        FallingItem prefab = Random.value < coinChance ? coinPrefab : asteroidPrefab;
         FallingItem item = Instantiate(prefab, field);
 
         Rect r = field.rect;
