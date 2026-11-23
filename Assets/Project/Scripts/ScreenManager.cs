@@ -100,6 +100,20 @@ public class ScreenManager : MonoBehaviour
         if (busy || history.Count == 0) return;
         Transition(history.Pop(), false);
     }
+    // Ek screen kholta hai aur Back dabane par pehle se tay screen par bhejta hai
+    public void GoToWithBack(string screenName, string backScreenName)
+    {
+        if (busy) return;
+
+        ScreenId target;
+        ScreenId backTo;
+        if (!Enum.TryParse(screenName, out target) || !Enum.TryParse(backScreenName, out backTo)) return;
+        if (!lookup.ContainsKey(target)) return;
+
+        history.Clear();
+        history.Push(backTo);
+        Transition(target, true);
+    }
 
     private void Transition(ScreenId target, bool forward)
     {

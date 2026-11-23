@@ -10,6 +10,7 @@ public class ResultsButtons : MonoBehaviour
     [SerializeField] private TMP_Text secondaryLabel;
 
     private bool canAdvance;
+    private bool isFinal;
 
     private void Awake()
     {
@@ -19,10 +20,12 @@ public class ResultsButtons : MonoBehaviour
 
     private void OnEnable()
     {
-        // Agla level sirf Classic mein, jeetne par, aur jab agla level maujood ho
-        canAdvance = RunResult.Won && GameState.IsClassic && GameState.SelectedLevel < GameState.MaxLevel;
+        bool wonClassic = RunResult.Won && GameState.IsClassic;
 
-        primaryLabel.text = canAdvance ? "NEXT LEVEL" : "TRY AGAIN";
+        isFinal = wonClassic && GameState.SelectedLevel >= GameState.MaxLevel;
+        canAdvance = wonClassic && !isFinal;
+
+        primaryLabel.text = canAdvance ? "NEXT LEVEL" : (isFinal ? "CREDITS" : "TRY AGAIN");
 
         if (canAdvance) secondaryLabel.text = "RETRY";
         else secondaryLabel.text = GameState.IsClassic ? "LEVEL SELECT" : "CHANGE MODE";
@@ -30,6 +33,14 @@ public class ResultsButtons : MonoBehaviour
 
     private void OnPrimary()
     {
+        if (isFinal)
+        {
+            // Credits ke baad Back dabane par seedha Main Menu
+            if (ScreenManager.Instance != null)
+                ScreenManager.Instance.GoToWithBack("Credits", "MainMenu");
+            return;
+        }
+
         if (canAdvance) GameState.SelectedLevel++;
         Go("Loading");
     }

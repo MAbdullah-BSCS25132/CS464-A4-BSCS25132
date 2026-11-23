@@ -15,7 +15,7 @@ public class LevelOption : MonoBehaviour
 
     private bool IsUnlocked
     {
-        get { return level <= GameState.UnlockedLevel; }
+        get { return SaveData.IsUnlocked(level); }
     }
 
     private void Awake()
@@ -33,7 +33,11 @@ public class LevelOption : MonoBehaviour
     {
         bool unlocked = IsUnlocked;
         numberText.text = level.ToString();
-        labelText.text = unlocked ? "LEVEL " + level : "LOCKED";
+
+        if (!unlocked) labelText.text = "LOCKED";
+        else if (SaveData.HasBest(level)) labelText.text = "BEST " + SaveData.FormatTime(SaveData.GetBest(level));
+        else labelText.text = "NOT CLEARED";
+
         background.color = unlocked ? unlockedColor : lockedColor;
         numberText.alpha = unlocked ? 1f : 0.3f;
         labelText.alpha = unlocked ? 1f : 0.5f;

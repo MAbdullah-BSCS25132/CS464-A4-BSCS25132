@@ -3,13 +3,19 @@ using System.Collections.Generic;
 
 public static class GameState
 {
-    public const int MaxLevel = 6;
+    public const int MaxLevel = SaveData.LevelCount;
 
     public static string SelectedMode = "CLASSIC";
     public static int SelectedLevel = 1;
-    public static int UnlockedLevel = 1;
     public static int Coins = 500;
     public static string SelectedShip = "FALCON";
+
+    // Unlock ab PlayerPrefs mein save hota hai (SaveData ke zariye)
+    public static int UnlockedLevel
+    {
+        get { return SaveData.Unlocked; }
+        set { SaveData.Unlock(value); }
+    }
 
     private static readonly HashSet<string> owned = new HashSet<string> { "FALCON" };
     private static readonly Dictionary<string, int> items = new Dictionary<string, int>();
@@ -46,7 +52,6 @@ public static class GameState
         return true;
     }
 
-    // Kharide hue power-ups (agle chunk mein kaam aayenge)
     public static void AddItem(string id)
     {
         int count;

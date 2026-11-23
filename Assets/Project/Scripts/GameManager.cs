@@ -125,10 +125,15 @@ public class GameManager : MonoBehaviour
     private void Finish(bool won)
     {
         IsPlaying = false;
+        RunResult.NewBest = false;
 
-        // Classic mein level jeetne par agla level unlock
+        // Classic mein jeetne par best time save hota hai aur agla level unlock hota hai
         if (won && GameState.IsClassic)
-            GameState.UnlockedLevel = Mathf.Max(GameState.UnlockedLevel, Mathf.Min(GameState.MaxLevel, Level + 1));
+        {
+            RunResult.NewBest = SaveData.Record(Level, Elapsed);
+            RunResult.BestTime = SaveData.GetBest(Level);
+            SaveData.Unlock(Level + 1);
+        }
 
         if (won) GameWon?.Invoke();
         else GameLost?.Invoke();

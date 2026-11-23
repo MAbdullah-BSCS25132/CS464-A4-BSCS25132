@@ -6,4 +6,6 @@ public static class RunResult
     public static bool Won;
     public static int Seconds;
     public static bool BoostUsed;
+    public static bool NewBest;
+    public static float BestTime;
 }

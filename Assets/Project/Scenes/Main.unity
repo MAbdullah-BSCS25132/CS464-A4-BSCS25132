@@ -7184,7 +7184,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6435629047810157980, guid: c31c85bbc5bf33d45b8abbd12f1151fe, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6435629047810157980, guid: c31c85bbc5bf33d45b8abbd12f1151fe, type: 3}
       propertyPath: m_AnchorMin.x
@@ -7192,7 +7192,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6435629047810157980, guid: c31c85bbc5bf33d45b8abbd12f1151fe, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6435629047810157980, guid: c31c85bbc5bf33d45b8abbd12f1151fe, type: 3}
       propertyPath: m_SizeDelta.x
@@ -7232,11 +7232,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6435629047810157980, guid: c31c85bbc5bf33d45b8abbd12f1151fe, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 720
       objectReference: {fileID: 0}
     - target: {fileID: 6435629047810157980, guid: c31c85bbc5bf33d45b8abbd12f1151fe, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -1180
       objectReference: {fileID: 0}
     - target: {fileID: 6435629047810157980, guid: c31c85bbc5bf33d45b8abbd12f1151fe, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -7261,6 +7261,10 @@ PrefabInstance:
     - target: {fileID: 8560450342664909427, guid: c31c85bbc5bf33d45b8abbd12f1151fe, type: 3}
       propertyPath: m_Name
       value: Card (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8560450342664909427, guid: c31c85bbc5bf33d45b8abbd12f1151fe, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
