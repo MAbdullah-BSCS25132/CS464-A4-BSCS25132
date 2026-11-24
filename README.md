@@ -23,8 +23,8 @@ ITU CS-464 Game Development
 ## Screenshots
 
 <p>
-<img src="Docs/screenshots/HUD_SS.png" width="240" alt="HUD at 9:16">
-<img src="Docs/screenshots/HUD_SS - GrayScale.png" width="240" alt="HUD in grayscale">
+<img src="docs/screenshots/HUD_SS.png" width="240" alt="HUD at 9:16">
+<img src="docs/screenshots/HUD_SS - GrayScale.png" width="240" alt="HUD in grayscale">
 </p>
 
 
