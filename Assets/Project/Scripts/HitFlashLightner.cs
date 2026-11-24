@@ -34,7 +34,7 @@ public class HitFlashListener : MonoBehaviour
         SetAlpha(0f);
     }
 
-    private void OnDamaged(int healthLeft)
+    private void OnDamaged(int current, int max)
     {
         flash.DOKill();
         SetAlpha(peakAlpha);

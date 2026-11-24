@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     // ---- C# events (publisher) ----
     public event Action GameStarted;
     public event Action<int, int> Collected;   // coins jama, target (0 = koi target nahi)
-    public event Action<int> Damaged;          // bachi hui lives
+    public event Action<int, int> Damaged;     // (current, max)
     public event Action ShieldBlocked;         // shield ne hit roka
     public event Action<int> Ticked;           // timer ke seconds (bache hue ya guzre hue)
     public event Action GameWon;
@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour
         }
 
         Health--;
-        Damaged?.Invoke(Health);
+        Damaged?.Invoke(Health, MaxHealth);
 
         if (Health <= 0) Finish(false);
     }

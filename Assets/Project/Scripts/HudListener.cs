@@ -9,8 +9,10 @@ public class HudListener : MonoBehaviour
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private TMP_Text modeText;
     [SerializeField] private TMP_Text shieldText;
+    [SerializeField] private TMP_Text livesText;
     [SerializeField] private TMP_Text bannerText;
-    [SerializeField] private Image[] lives;
+    [SerializeField] private HealthBar healthBar;
+    [SerializeField] private Image[] lives;   // purane life icons, ab zaroori nahi
     [SerializeField] private Color lifeOn = new Color32(0x22, 0xD3, 0xEE, 255);
     [SerializeField] private Color lifeOff = new Color32(0x2B, 0x34, 0x63, 255);
 
@@ -57,10 +59,13 @@ public class HudListener : MonoBehaviour
 
         DrawScore(0, gm.TargetCoins);
 
+        if (healthBar != null) healthBar.Set(gm.Health, gm.MaxHealth);
+        DrawLives(gm.Health);
+
         for (int i = 0; i < lives.Length; i++)
             lives[i].gameObject.SetActive(i < gm.MaxHealth);
 
-        DrawLives(gm.Health);
+        DrawIcons(gm.Health);
     }
 
     private void OnCollected(int coins, int target)
@@ -70,14 +75,16 @@ public class HudListener : MonoBehaviour
         scoreText.transform.DOPunchScale(Vector3.one * 0.2f, 0.25f, 6, 0.5f);
     }
 
-    private void OnDamaged(int healthLeft)
+    private void OnDamaged(int current, int max)
     {
-        DrawLives(healthLeft);
+        if (healthBar != null) healthBar.Set(current, max);
+        DrawLives(current);
+        DrawIcons(current);
 
-        if (healthLeft >= 0 && healthLeft < lives.Length)
+        if (livesText != null)
         {
-            lives[healthLeft].transform.DOKill(true);
-            lives[healthLeft].transform.DOPunchScale(Vector3.one * 0.4f, 0.3f, 6, 0.5f);
+            livesText.transform.DOKill(true);
+            livesText.transform.DOPunchScale(Vector3.one * 0.2f, 0.3f, 6, 0.5f);
         }
     }
 
@@ -120,6 +127,11 @@ public class HudListener : MonoBehaviour
     }
 
     private void DrawLives(int health)
+    {
+        if (livesText != null) livesText.text = "LIVES " + Mathf.Max(0, health);
+    }
+
+    private void DrawIcons(int health)
     {
         for (int i = 0; i < lives.Length; i++)
             lives[i].color = i < health ? lifeOn : lifeOff;

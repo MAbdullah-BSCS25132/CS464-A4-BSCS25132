@@ -28,7 +28,7 @@ public class ScreenShakeListener : MonoBehaviour
         gm.GameLost -= OnGameLost;
     }
 
-    private void OnDamaged(int healthLeft)
+    private void OnDamaged(int current, int max)
     {
         Shake(damageStrength, 0.35f);
     }

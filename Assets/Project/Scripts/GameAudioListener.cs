@@ -42,7 +42,7 @@ public class GameAudioListener : MonoBehaviour
         Play(pickup, 1f + rise, true);
     }
 
-    private void OnDamaged(int healthLeft)
+    private void OnDamaged(int current, int max)
     {
         Play(damage, 1f, true);
     }
