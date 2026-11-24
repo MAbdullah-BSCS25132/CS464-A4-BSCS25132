@@ -1,10 +1,13 @@
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class GameplayFlow : MonoBehaviour
 {
+    public static bool IsPaused { get; private set; }
+
     [SerializeField] private CanvasGroup background;
     [SerializeField] private string gameplayScene = "Gameplay";
     [SerializeField] private AudioMixer mixer;
@@ -14,9 +17,17 @@ public class GameplayFlow : MonoBehaviour
 
     private const string CutoffParam = "MusicCutoff";
 
-    private bool paused;
     private float cutoff;
+    private float cutoffTarget;
     private Tween cutoffTween;
+
+    // Pause se wapas: time, static flag aur audio sab theek. Har load se pehle ye chalta hai.
+    public static void Resume()
+    {
+        IsPaused = false;
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+    }
 
     private void OnEnable()
     {
@@ -27,6 +38,7 @@ public class GameplayFlow : MonoBehaviour
     private void Start()
     {
         cutoff = normalCutoff;
+        cutoffTarget = normalCutoff;
         SetCutoff(cutoff);
     }
 
@@ -36,23 +48,58 @@ public class GameplayFlow : MonoBehaviour
             ScreenManager.Instance.ScreenShown -= OnScreenShown;
 
         cutoffTween?.Kill();
-        Time.timeScale = 1f;
+        Resume();
+    }
+
+    private void Update()
+    {
+        Keyboard kb = Keyboard.current;
+        if (kb == null || !kb.escapeKey.wasPressedThisFrame) return;
+
+        ScreenManager sm = ScreenManager.Instance;
+        if (sm == null || sm.IsBusy) return;
+
+        switch (sm.Current)
+        {
+            case ScreenId.Gameplay:
+                if (GameManager.Instance != null && GameManager.Instance.IsPlaying)
+                {
+                    UIAudio.Play(UISound.Pause);
+                    sm.GoTo("Pause");
+                }
+                break;
+
+            case ScreenId.Pause:
+                UIAudio.Play(UISound.Resume);
+                sm.Back();
+                break;
+
+            case ScreenId.ModeSelect:
+            case ScreenId.LevelSelect:
+            case ScreenId.Loadout:
+            case ScreenId.Shop:
+            case ScreenId.Settings:
+            case ScreenId.Credits:
+                UIAudio.Play(UISound.Back);
+                sm.Back();
+                break;
+        }
     }
 
     private void OnScreenShown(ScreenId id)
     {
         // Pause: game ruk jata hai. Pause se Settings kholne par bhi ruka rehta hai.
-        bool nowPaused;
-        if (id == ScreenId.Pause) nowPaused = true;
-        else if (id == ScreenId.Settings && paused) nowPaused = true;
-        else nowPaused = false;
+        bool nowPaused = id == ScreenId.Pause || (id == ScreenId.Settings && IsPaused);
 
+        IsPaused = nowPaused;
         Time.timeScale = nowPaused ? 0f : 1f;
 
-        if (nowPaused != paused)
+        // Pause mein music dabi hui, wapas aane par saaf
+        float want = nowPaused ? pausedCutoff : normalCutoff;
+        if (!Mathf.Approximately(want, cutoffTarget))
         {
-            paused = nowPaused;
-            FadeMusicCutoff(paused ? pausedCutoff : normalCutoff);
+            cutoffTarget = want;
+            FadeMusicCutoff(want);
         }
 
         // Gameplay mein menu ka background chhupa do, taake gameplay nazar aaye

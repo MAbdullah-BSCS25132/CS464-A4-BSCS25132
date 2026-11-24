@@ -25,9 +25,9 @@ public class ResultsButtons : MonoBehaviour
         isFinal = wonClassic && GameState.SelectedLevel >= GameState.MaxLevel;
         canAdvance = wonClassic && !isFinal;
 
-        primaryLabel.text = canAdvance ? "NEXT LEVEL" : (isFinal ? "CREDITS" : "TRY AGAIN");
+        primaryLabel.text = canAdvance ? "NEXT LEVEL" : (isFinal ? "CREDITS" : "RESTART");
 
-        if (canAdvance) secondaryLabel.text = "RETRY";
+        if (canAdvance) secondaryLabel.text = "RESTART";
         else secondaryLabel.text = GameState.IsClassic ? "LEVEL SELECT" : "CHANGE MODE";
     }
 
@@ -53,6 +53,8 @@ public class ResultsButtons : MonoBehaviour
 
     private void Go(string screen)
     {
+        GameplayFlow.Resume();
+
         if (ScreenManager.Instance != null)
             ScreenManager.Instance.GoTo(screen);
     }

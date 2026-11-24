@@ -28,6 +28,7 @@ public class PlayerShip : MonoBehaviour
 
     private void Update()
     {
+        if (GameplayFlow.IsPaused) return;
         Rect r = field.rect;
         float x = rt.anchoredPosition.x;
 

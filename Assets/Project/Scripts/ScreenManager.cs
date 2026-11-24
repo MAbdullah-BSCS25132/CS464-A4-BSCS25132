@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 // Naye screens hamesha list ke END mein add karo, warna Inspector mein purane ids badal jate hain.
 public enum ScreenId
@@ -94,12 +96,6 @@ public class ScreenManager : MonoBehaviour
         Transition(target, true);
     }
 
-    // Back button ke liye
-    public void Back()
-    {
-        if (busy || history.Count == 0) return;
-        Transition(history.Pop(), false);
-    }
     // Ek screen kholta hai aur Back dabane par pehle se tay screen par bhejta hai
     public void GoToWithBack(string screenName, string backScreenName)
     {
@@ -113,6 +109,13 @@ public class ScreenManager : MonoBehaviour
         history.Clear();
         history.Push(backTo);
         Transition(target, true);
+    }
+
+    // Back button ke liye
+    public void Back()
+    {
+        if (busy || history.Count == 0) return;
+        Transition(history.Pop(), false);
     }
 
     private void Transition(ScreenId target, bool forward)
@@ -158,8 +161,26 @@ public class ScreenManager : MonoBehaviour
             current = target;
             hasCurrent = true;
             busy = false;
+
+            FocusFirst(next, target);
         });
 
         ScreenShown?.Invoke(target);
+    }
+
+    // Screen khulte hi pehla button select (keyboard ke liye)
+    private void FocusFirst(CanvasGroup panel, ScreenId id)
+    {
+        if (EventSystem.current == null) return;
+
+        // Gameplay aur Loading mein koi button select nahi hona chahiye
+        if (id == ScreenId.Gameplay || id == ScreenId.Loading)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            return;
+        }
+
+        Selectable first = panel.GetComponentInChildren<Selectable>();
+        EventSystem.current.SetSelectedGameObject(first != null ? first.gameObject : null);
     }
 }
