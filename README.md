@@ -1,15 +1,9 @@
-# UNIVERSE FIGHTER - Lab 08
+# UNIVERSE FIGHTER - ASM 04
 
 ITU CS-464 Game Development
 
 **Name:** MUHAMMAD ABDULLAH
 **Roll number:** BSCS-25132 (B)
-
-This project is built on top of my Lab 07 menu project. All 10 Lab 07 screens, their navigation, tweens and mobile layout still work. In Lab 08 I added a loading screen, a small playable game, sounds and music, an Audio Mixer with volume settings, and C# events.
-
-## Gameplay Video Drive Link
-
-[Watch Gameplay Demo Video](https://drive.google.com/file/d/1l_U5wJAf6j1DdF6plQKqnB41kGVXc0nU/view?usp=sharing)
 
 ## Unity version and setup
 
@@ -19,90 +13,70 @@ This project is built on top of my Lab 07 menu project. All 10 Lab 07 screens, t
 2. Open the scene `Assets/_Project/Scenes/Main.unity`.
 3. In File > Build Profiles > Scene List, `Main` must be first and `Gameplay` second.
 4. Set the Game view to portrait (1080 x 1920) and press Play from the `Main` scene.
-5. Or you can simple download only window build folder named as: "Universe_Fighter_Build".
+5. Or you can simple download only window build folder named as: "ASM-04-Build-Windows".
 6. Then find .exe file name as : "Universe Fighter" , double click it to test and play the game.
 
-## The game
+## Gameplay Video Drive Link
 
-Move the ship left and right (mouse, touch, or A/D keys). Collect coins and avoid red rocks.
+[Watch Gameplay Demo Video](https://drive.google.com/file/d/17cSnu2fjjBNxVZlPsCZZxAQzDExPbHdC/view?usp=sharing)
 
-- Classic: 6 levels. Levels unlock one by one. Each level is faster and needs more coins.
-- Endless: no target. The game gets faster until you lose.
-- Time Attack: collect as many coins as you can in 45 seconds.
-- Shop: Nova ship is faster, Comet ship has 1 extra life, Shield blocks one hit, Boost doubles the coins of the next run.
+## Screenshots
 
-## Loading flow
+<p>
+<img src="Docs/screenshots/HUD_SS.png" width="240" alt="HUD at 9:16">
+<img src="Docs/screenshots/HUD_SS - GrayScale.png" width="240" alt="HUD in grayscale">
+</p>
 
-1. Pressing LAUNCH opens the Loading screen.
-2. `SceneLoader` loads the `Gameplay` scene with `LoadSceneAsync` (additive) and sets `allowSceneActivation = false`.
-3. The bar and percentage show the real progress (`progress / 0.9`). A minimum show time of 1.5 seconds keeps the bar visible on fast loads.
-4. At 100% the scene is activated, the Gameplay screen opens, and only then the game starts.
-5. The player cannot play before loading is complete.
 
-## Audio Mixer
+## Settings and Implementation
 
-![Audio Mixer](docs/screenshots/audio_mixer.png)
+| Part | Setting | Value | Explanation |
+|---|---|---|---|
+| A | Colour harmony | Split-complementary, 188° | I used cyan as the main colour. Rose is used for hazards and amber for pickups, so rewards and danger are easy to identify. |
+| A | Main colours | #0D272B, #22D3EE, #EDFDFF | These are the dark, middle and light shades. They also look different in grayscale. |
+| A | Accent colours | #FFCA61, #C72862 | Amber is used for coins and rose for hazards. The player, coins and asteroids also have different shapes and colours. |
+| A | HUD text contrast | 10.34:1, 14.97:1, 8.66:1 | Score, time, lives and mode text have good contrast against the dark panel. All are above the 4.5:1 requirement. |
+| A | Button text contrast | 10.41:1, 9.16:1, 14.91:1, 5.83:1 | I used dark text on bright buttons and light text on dark buttons to make labels easy to read. |
+| A | Health bar lag | 0.4 sec wait, 0.8 per second | The light part of the health bar shows the health that was recently lost. |
+| B | Music and SFX volume | 0 dB and -1.9 dB | Music slider starts at 1 and SFX at 0.8. |
+| B | Volume slider values | 1, 0.5, 0.0001 | These give 0 dB, -6.02 dB and -80 dB. The minimum value avoids taking the log of zero. |
+| B | SFX pitch | ±2 semitones | Pitch changes between approximately 0.89x and 1.12x. There are four SFX voices and two UI voices using `PlayOneShot`. |
+| C | Asteroid sound | Linear, Min 1, Max 5 | The asteroid sound gets quieter with distance and becomes silent at the maximum distance. |
+| C | Coin sound | Logarithmic, Min 0.8, Max 12 | This makes the coin sound fade more naturally. The sound can be heard from a longer distance. |
+| C | AudioListener | On the player ship | I removed the camera's AudioListener and placed it on the ship so sound distance is measured correctly. |
+| D | Unlocked levels | Integer, default 1 | Level 1 is always unlocked when the game starts for the first time. |
+| D | Best times | Float, HasKey check | I check if a best time exists before reading it. This avoids showing 0:00 for a level that has not been completed. |
+| D | MusicVolume | Float, default 1 | Music starts at full volume on the first run. |
 
-| Mixer group | What uses it |
-|---|---|
-| Master | Parent of all groups |
-| Music | The two music AudioSources on `AudioManager` |
-| SFX | Gameplay sounds (AudioSource on `GameAudio`) |
-| UI | All UI sounds (AudioSource on `UIAudio`) |
+## Assignment Questions
 
-Exposed parameters: `MasterVol`, `MusicVol`, `SFXVol`, `UIVol`, `MusicCutoff`.
+### 1. What happens when `Time.timeScale = 0`?
 
-## Volume settings
+When `Time.timeScale` is set to 0, all things using `Time.deltaTime` stop moving. In my game, this includes the ship, asteroid spawner, coins, asteroids, game timer and health bar lag.
 
-- The Settings screen has sliders for Master, Music, SFX and UI.
-- Slider value (0 to 1) is changed to decibels with `dB = 20 * log10(value)`.
-- At 0 the value is set to -80 dB (silent), so mute is safe.
-- Values are saved with PlayerPrefs and loaded when the game starts.
+Some things still work because they use unscaled time. These include menu tweens (`SetUpdate(true)`), the music low-pass fade, `WaitForSecondsRealtime` and audio. The `Update()` method also keeps running, so the Escape key can still be detected.
 
-## Sounds and music
+### 2. What survives when a scene is loaded?
 
-- **UI sounds:** one `UIAudio` object plays all of them (hover, click, back, panel open/close, pause, resume, success, error). No AudioSource on each button.
-- **Gameplay sounds:** pickup, damage, win and lose, played with `PlayOneShot`. Pickup and damage use a small random pitch change.
-- **Music change:** `AudioManager` crossfades two music sources in 1.2 seconds. Menu, Loading and Results use the menu music. Gameplay and Pause use the gameplay music.
-- **While paused:** music keeps playing but sounds muffled (low-pass filter 22000 Hz to 700 Hz on the Music group). UI sounds keep playing. Gameplay sounds stop because the game is frozen.
+In my game, the `Main` scene stays loaded while the `Gameplay` scene is loaded on top of it. When the game restarts, only the Gameplay scene is loaded again.
 
-## C# events
+`AudioManager` and `SfxPlayer` stay active because they use `DontDestroyOnLoad`. Static data like `GameState`, `RunResult` and `GameplayFlow.IsPaused` also remains available. `PlayerPrefs` data is saved on the device and stays there even after closing the game.
 
-`GameManager` publishes these events: `GameStarted`, `Collected`, `Damaged`, `ShieldBlocked`, `Ticked`, `GameWon`, `GameLost`.
+### 3. Why do I use default values with PlayerPrefs?
 
-| Subscriber | Events | What it does |
-|---|---|---|
-| `HudListener` | all | Updates score, lives, timer and banner |
-| `GameAudioListener` | Collected, Damaged, ShieldBlocked, GameWon, GameLost | Plays sounds |
-| `HitFlashListener` | GameStarted, Damaged | Red screen flash |
-| `ScreenShakeListener` | Damaged, GameLost | Shakes the play area |
-| `ResultsListener` | GameWon, GameLost | Opens the Results screen |
-| `Spawner` | GameStarted | Clears old items |
+When a PlayerPrefs key does not exist, Unity returns 0 if no default value is given.
 
-Code excerpt:
+This can cause problems on the first run. For example, no level might be unlocked, music could be silent and the best time could incorrectly show 0:00.
 
-```csharp
-// GameManager.cs (publisher)
-public event Action<int> Damaged;
+To avoid this, I use default values. The unlocked level starts at 1, music volume starts at 1, and best times are checked using `HasKey`. If there is no saved time, the game shows NOT CLEARED.
 
-public void TakeDamage()
-{
-    Health--;
-    Damaged?.Invoke(Health);
-}
+### 4. What happens if an event is not unsubscribed?
 
-// HitFlashListener.cs (subscriber)
-private void OnEnable()
-{
-    gm = GameManager.Instance;
-    gm.Damaged += OnDamaged;
-}
+If a script subscribes to an event using `+=` but does not unsubscribe using `-=`, the event can still hold a reference to that script after it is destroyed.
 
-private void OnDisable()
-{
-    gm.Damaged -= OnDamaged;
-}
-```
+For example, if `HitFlashListener` is destroyed and the `Damaged` event is called later, Unity can throw a `MissingReferenceException`.
+
+I avoid this by subscribing in `OnEnable()` and unsubscribing in `OnDisable()`. This makes sure the listener is removed when the Gameplay scene is unloaded.
 
 ## Credits
 

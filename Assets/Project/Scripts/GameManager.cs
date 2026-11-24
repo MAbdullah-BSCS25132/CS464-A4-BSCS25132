@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
         Elapsed += Time.deltaTime;
 
         if (GameState.IsEndless)
-            Difficulty = 1f + Elapsed / 12f;
+            Difficulty = Mathf.Min(1f + Elapsed / 90f, 3f);
 
         int shown = GameState.IsTimeAttack
             ? Mathf.CeilToInt(Mathf.Max(0f, timeAttackSeconds - Elapsed))
