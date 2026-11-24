@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 407563800116106174}
   - component: {fileID: 1042303122456724377}
   - component: {fileID: 6405611615340691986}
+  - component: {fileID: 7353392125004238796}
   m_Layer: 5
   m_Name: Asteroid
   m_TagString: Untagged
@@ -90,3 +91,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FallingItem
   kind: 1
   radius: 60
+--- !u!114 &7353392125004238796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7023706417484597136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0146e4d0aacedef42ada61c2fb476609, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldSound
+  clip: {fileID: 8300000, guid: 4590b37e317b78649b843cb04809777c, type: 3}
+  output: {fileID: 6035934190253253268, guid: 6332d903b7542cb418689c76c7e94ea3, type: 2}
+  rolloff: 1
+  minDistance: 1
+  maxDistance: 5
+  volume: 1

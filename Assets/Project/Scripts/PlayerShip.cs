@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class PlayerShip : MonoBehaviour
 {
+    public static PlayerShip Instance { get; private set; }
+
     [SerializeField] private RectTransform field;
     [SerializeField] private float baseSpeed = 1300f;
     [SerializeField] private float bottomOffset = 420f;
@@ -12,6 +14,8 @@ public class PlayerShip : MonoBehaviour
     private RectTransform rt;
     private float speed;
 
+    public RectTransform ShipRect { get { return rt; } }
+
     private void Awake()
     {
         rt = (RectTransform)transform;
@@ -19,6 +23,8 @@ public class PlayerShip : MonoBehaviour
 
     private void OnEnable()
     {
+        Instance = this;
+
         string ship = GameState.SelectedShip;
         speed = baseSpeed * ShipStats.SpeedMultiplier(ship);
 
@@ -26,9 +32,15 @@ public class PlayerShip : MonoBehaviour
         if (img != null) img.color = ShipStats.ColorOf(ship);
     }
 
+    private void OnDisable()
+    {
+        if (Instance == this) Instance = null;
+    }
+
     private void Update()
     {
         if (GameplayFlow.IsPaused) return;
+
         Rect r = field.rect;
         float x = rt.anchoredPosition.x;
 
