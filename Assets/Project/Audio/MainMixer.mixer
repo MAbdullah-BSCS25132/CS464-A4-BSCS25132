@@ -81,11 +81,11 @@ AudioMixerController:
   - guid: bd3ce13c2ad02f54c97b3eedef77e0d9
     name: MasterVol
   - guid: 2e012ee685855204f9650fdf570a6cfb
-    name: MusicVol
+    name: MusicVolume
   - guid: 5fd4fb31c9ed67247a4297cb5b2edf91
     name: MusicCutoff
   - guid: ad7a65096d559aa45b4ea52464d4d6f2
-    name: SFXVol
+    name: SfxVolume
   - guid: 9998dd35e6a478f4f82e25618e002768
     name: UIVol
   m_AudioMixerGroupViews:

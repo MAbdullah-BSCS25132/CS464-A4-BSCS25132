@@ -6,7 +6,6 @@ public class UIAudio : MonoBehaviour
 {
     public static UIAudio Instance { get; private set; }
 
-    [SerializeField] private AudioSource source;
     [SerializeField] private AudioClip hover;
     [SerializeField] private AudioClip click;
     [SerializeField] private AudioClip back;
@@ -20,21 +19,12 @@ public class UIAudio : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        if (source == null) source = GetComponent<AudioSource>();
-
-        // UI awaazein pause ke dauran bhi chalni chahiye
-        source.ignoreListenerPause = true;
     }
 
     public static void Play(UISound sound)
     {
-        if (Instance != null) Instance.PlayInternal(sound);
-    }
-
-    private void PlayInternal(UISound sound)
-    {
-        AudioClip clip = GetClip(sound);
-        if (clip != null) source.PlayOneShot(clip);
+        if (Instance == null || SfxPlayer.Instance == null) return;
+        SfxPlayer.Instance.PlayUi(Instance.GetClip(sound));
     }
 
     private AudioClip GetClip(UISound sound)

@@ -20,7 +20,15 @@ public class AudioManager : MonoBehaviour
 
     private void Awake()
     {
+        // Sirf ek music player: doosra copy ho to khud hat jata hai
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
+        DontDestroyOnLoad(gameObject);
 
         active = sourceA;
         idle = sourceB;

@@ -13,7 +13,7 @@ public class VolumeSlider : MonoBehaviour
     private void Awake()
     {
         slider = GetComponent<Slider>();
-        slider.minValue = 0f;
+        slider.minValue = VolumeSettings.MinVolume;
         slider.maxValue = 1f;
         slider.onValueChanged.AddListener(OnChanged);
     }

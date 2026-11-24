@@ -2,13 +2,11 @@ using UnityEngine;
 
 public class GameAudioListener : MonoBehaviour
 {
-    [SerializeField] private AudioSource sfx;
     [SerializeField] private AudioClip pickup;
     [SerializeField] private AudioClip damage;
     [SerializeField] private AudioClip win;
     [SerializeField] private AudioClip lose;
     [SerializeField] private AudioClip shield;
-    [SerializeField] private float pitchVariation = 0.08f;
 
     private GameManager gm;
 
@@ -37,38 +35,37 @@ public class GameAudioListener : MonoBehaviour
 
     private void OnCollected(int coins, int target)
     {
-        // Har coin par pitch thodi upar jati hai (combo jaisa ehsaas), saath mein random variation
+        // Har coin par pitch thodi upar jati hai (combo jaisa ehsaas)
         float rise = Mathf.Min(coins, 10) * 0.02f;
-        Play(pickup, 1f + rise, true);
+        Play(pickup, 1f + rise);
     }
 
     private void OnDamaged(int current, int max)
     {
-        Play(damage, 1f, true);
+        Play(damage, 1f);
     }
 
     private void OnShieldBlocked()
     {
         // Shield ki alag awaaz na ho to damage ki awaaz oonchi pitch par
-        if (shield != null) Play(shield, 1f, true);
-        else Play(damage, 1.5f, true);
+        if (shield != null) Play(shield, 1f);
+        else Play(damage, 1.5f);
     }
 
     private void OnGameWon()
     {
-        Play(win, 1f, false);
+        Play(win, 1f);
     }
 
     private void OnGameLost()
     {
-        Play(lose, 1f, false);
+        Play(lose, 1f);
     }
 
-    private void Play(AudioClip clip, float basePitch, bool randomize)
+    // Sab kuch SfxPlayer se (wo object destroy nahi hota, to awaaz kat'ti nahi)
+    private void Play(AudioClip clip, float basePitch)
     {
-        if (clip == null || sfx == null) return;
-
-        sfx.pitch = randomize ? basePitch + Random.Range(-pitchVariation, pitchVariation) : basePitch;
-        sfx.PlayOneShot(clip);
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.Play(clip, basePitch);
     }
 }
